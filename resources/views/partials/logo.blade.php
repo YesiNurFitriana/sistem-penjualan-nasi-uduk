@@ -1,0 +1,1 @@
+<span class="logo {{ $cls ?? '' }}">UduxMu!<svg viewBox="0 0 60 22" aria-hidden="true"><path d="M5 5 Q30 26 55 5" stroke="#f5c518" stroke-width="6" fill="none" stroke-linecap="round"/></svg></span>

@@ -9,7 +9,17 @@ use Illuminate\Support\Facades\DB;
 class OrderController extends Controller {
   const FLOW = ['konfirmasi' => ['Menunggu Konfirmasi', 'Dikonfirmasi'], 'tolak' => ['Menunggu Konfirmasi', 'Ditolak'], 'siapkan' => ['Dikonfirmasi', 'Sedang Disiapkan'],
     'siap' => ['Sedang Disiapkan', 'Siap Diambil'], 'selesai' => ['Siap Diambil', 'Selesai'], 'batal' => [null, 'Dibatalkan']];
-  public function index() { return view('admin.orders', ['orders' => Order::with('user', 'items.menu')->latest('pickup_date')->latest('id')->paginate(20)]); }
+public function index(Request $r) {
+    $s = now()->startOfWeek()->toDateString(); $e = now()->endOfWeek()->toDateString(); $final = ['Selesai', 'Ditolak', 'Dibatalkan'];
+    $f = [
+      'minggu' => fn($q) => $q->whereNotIn('status', $final)->whereBetween('pickup_date', [$s, $e]),
+      'lainnya' => fn($q) => $q->whereNotIn('status', $final)->where(fn($w) => $w->whereDate('pickup_date', '<', $s)->orWhereDate('pickup_date', '>', $e)),
+      'riwayat' => fn($q) => $q->whereIn('status', $final)];
+    $tab = array_key_exists($r->query('tab'), $f) ? $r->query('tab') : 'minggu';
+    $counts = collect($f)->map(fn($fn) => $fn(Order::query())->count());
+    $orders = $f[$tab](Order::with('user', 'items.menu'))->orderBy('pickup_date', $tab === 'riwayat' ? 'desc' : 'asc')->orderBy('pickup_time')->paginate(15)->withQueryString();
+    return view('admin.orders', compact('orders', 'tab', 'counts'));
+  }
   public function act(Request $r, Order $order, string $aksi) {
     abort_unless(isset(self::FLOW[$aksi]), 404);
     try {

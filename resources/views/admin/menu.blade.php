@@ -4,6 +4,7 @@
 <div class="col-md-4"><label class="form-label">Nama</label><input name="name" class="form-control" value="{{ old('name',$edit->name??'') }}" required></div>
 <div class="col-md-3"><label class="form-label">Harga (Rp)</label><input name="price" type="number" min="0" class="form-control" value="{{ old('price',$edit->price??'') }}" required></div>
 <div class="col-md-5"><label class="form-label">Foto</label><input name="photo" type="file" accept="image/*" class="form-control"></div>
+<div class="col-12"><label class="form-label">Deskripsi singkat (tampil di kartu menu)</label><input name="description" class="form-control" value="{{ old('description',$edit->description??'') }}"></div>
 <div class="col-12"><label class="form-label">Catatan</label><input name="note" class="form-control" value="{{ old('note',$edit->note??'') }}"></div>
 <div class="col-12 d-flex flex-wrap gap-3">
 <div class="form-check"><input type="checkbox" name="is_active" value="1" class="form-check-input" @checked(old('is_active',$edit->is_active??true))><label class="form-check-label">Aktif</label></div>

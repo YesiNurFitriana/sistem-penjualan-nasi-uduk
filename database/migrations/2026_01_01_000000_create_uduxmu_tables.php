@@ -1,18 +1,12 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
 return new class extends Migration {
     public function up(): void {
         Schema::table('users', function (Blueprint $t) {
-            if (!Schema::hasColumn('users', 'role')) {
-                $t->string('role', 20)->default('pelanggan')->after('email');
-            }
-            if (!Schema::hasColumn('users', 'phone')) {
-                $t->string('phone', 20)->nullable();
-            }
+            $t->string('role', 20)->default('pelanggan')->after('email');
+            $t->string('phone', 20)->nullable();
         });
         Schema::create('settings', function (Blueprint $t) { $t->string('key')->primary(); $t->string('value'); });
         Schema::create('daily_quotas', function (Blueprint $t) { $t->date('date')->primary(); $t->unsignedInteger('quota'); });
@@ -42,25 +36,6 @@ return new class extends Migration {
         Schema::create('sale_items', function (Blueprint $t) {
             $t->id(); $t->foreignId('sale_id')->constrained()->cascadeOnDelete(); $t->foreignId('menu_id')->constrained();
             $t->unsignedInteger('qty'); $t->unsignedInteger('price'); $t->json('allocations')->nullable();
-        });
-    }
-
-    public function down(): void {
-        Schema::dropIfExists('sale_items');
-        Schema::dropIfExists('sales');
-        Schema::dropIfExists('order_items');
-        Schema::dropIfExists('orders');
-        Schema::dropIfExists('batches');
-        Schema::dropIfExists('menus');
-        Schema::dropIfExists('daily_quotas');
-        Schema::dropIfExists('settings');
-        Schema::table('users', function (Blueprint $t) {
-            if (Schema::hasColumn('users', 'role')) {
-                $t->dropColumn('role');
-            }
-            if (Schema::hasColumn('users', 'phone')) {
-                $t->dropColumn('phone');
-            }
         });
     }
 };
